@@ -1,0 +1,51 @@
+Config { 
+          borderColor = "black"
+        , border = TopB
+        , bgColor = "black"
+        , fgColor = "grey"
+	, font = "-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*"
+        , position = TopW L 120
+        , commands = [ Run Weather "UUDD" ["-t","<tempC>C","-L","25","-H","35","--normal","green","--high","red","--low","lightblue"] 36000
+                        , Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+                        , Run Network "eth1" ["-L","0","-H","32","--normal","green","--high","red"] 10
+                        , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                        , Run Memory ["-t","Mem: <usedratio>%"] 10
+                        , Run Swap [] 10
+                        , Run Com "uname" ["-s","-r"] "" 36000
+                        , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+                        , Run StdinReader
+			, Run MultiCpu       [ "--template" , "Cpu: <total0>|<total1>|<total2>|<total3>%"
+                             , "--Low"      , "50"         -- units: %
+                             , "--High"     , "85"         -- units: %
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 10
+        		, Run CoreTemp       [ "--template" , "Temp: <core0>|<core1>|<core2>|<core3>°C"
+                             , "--Low"      , "70"        -- units: °C
+                             , "--High"     , "80"        -- units: °C
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 50
+			, Run DynNetwork     [ "--template" , "<dev>: <tx>kB/s|<rx>kB/s"
+                             , "--Low"      , "1000"       -- units: B/s
+                             , "--High"     , "5000"       -- units: B/s
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 10
+      , Run Battery [
+                   "-t", "<acstatus>: <left>% - <timeleft>",
+                   "--",
+                   --"-c", "charge_full",
+                   "-O", "AC",
+                   "-o", "Bat",
+                   "-h", "green",
+                   "-l", "red"
+                             ] 10
+                        ]
+        , sepChar = "%"
+        , alignSep = "}{"
+        , template = "%StdinReader% | %multicpu% | %coretemp% | %memory% * %swap% | %dynnetwork% | %battery%  }{<fc=#ee9a00>%date%</fc> | %uname% | %UUDD% "
+        }
